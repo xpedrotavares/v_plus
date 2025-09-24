@@ -9,7 +9,7 @@ const Header = () => {
         </a>
         <a
           href="#cta-final"
-          className="hidden sm:inline-block bg-accent text-white font-bold py-2 px-5 rounded-lg text-sm transform hover:scale-105 transition-transform duration-300"
+          className="border border-accent sm:inline-block text-white font-bold py-2 px-5 rounded-[15px] text-sm transform hover:scale-105 transition-transform duration-300"
         >
           Iniciar Avaliação
         </a>
