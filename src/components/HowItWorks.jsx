@@ -19,15 +19,15 @@ const HowItWorks = () => {
   return (
     <section className="py-20 md:py-24 bg-gray-900/50 px-6 overflow-hidden">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 ref={ref} className={`text-3xl md:text-4xl font-bold mb-12 reveal ${isVisible ? 'visible' : ''}`}>
-          Simples, Rápido e Pessoal.
+        <h2 ref={ref} className={`opacity-90 text-3xl md:text-4xl font-bold mb-12 reveal ${isVisible ? 'visible' : ''}`}>
+          Simples, Rápido e Seguro.
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <Step
             delayClass="reveal-delay-1"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line></svg>}
-            title="1. Escaneie e Comece"
-            description="Aponte sua câmera para o QR Code e diga 'Oi' no WhatsApp. Sem cadastros, sem apps."
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>}
+            title="1. Clique e Comece"
+            description="Clique em 'Fazer Avaliação' no topo da tela para abrir a conversa direto no seu WhatsApp. Sem cadastros, sem apps."
           />
           <Step
             delayClass="reveal-delay-2"

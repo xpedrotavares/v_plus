@@ -1,6 +1,7 @@
 import React from 'react';
 import Img from '../assets/imagem_hero.png'
-
+import ShinyText from './ShinyText';
+import AnimatedArrow from './AnimatedArrow';
 const Hero = () => {
   return (
     <section className="hero-bg min-h-[calc(100vh-70px)] flex items-center justify-center text-center p-4 pt-16 inset-shadow-sm inset-shadow-indigo-100">
@@ -26,12 +27,10 @@ const Hero = () => {
           {/* Descubra, em minutos, o mapa de imunização personalizado que seu corpo precisa para performar no seu máximo. De forma gratuita e inteligente, direto no seu WhatsApp. */}
           O V<span className="text-accent font-black">+</span> é o seu assistente de vacinação pessoal no WhatsApp. Descubra de forma simples e confiável quais vacinas são essenciais para a sua saúde
         </p>
-        <a
-          href="#cta-final"
-          className="inline-block border border-accent text-white font-bold py-4 px-8 rounded-[15px] text-lg transform hover:scale-105 transition-transform duration-300"
-        >
-          Iniciar Avaliação Agora
-        </a>
+        <span>
+          <br/>
+        </span>
+            <AnimatedArrow />
       </div>
     </section>
   );

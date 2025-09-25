@@ -1,27 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import useScrollReveal from '../hooks/useScrollReveal';
-
+import ShinyText from './ShinyText';
 // Função de easing (do código anterior)
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
+// Componente AnimatedNumber
 const AnimatedNumber = ({ target, isVisible, duration = 2000, onAnimationComplete = () => {} }) => {
   const [currentNumber, setCurrentNumber] = useState(0);
-
   useEffect(() => {
     if (!isVisible) {
       setCurrentNumber(0);
       return;
     }
-    
     let startTimestamp = null;
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
       const easedProgress = easeOutCubic(progress);
       const nextNumber = Math.floor(easedProgress * target);
-      
       setCurrentNumber(nextNumber);
-
       if (progress < 1) {
         window.requestAnimationFrame(step);
       } else {
@@ -31,25 +28,21 @@ const AnimatedNumber = ({ target, isVisible, duration = 2000, onAnimationComplet
     };
     window.requestAnimationFrame(step);
   }, [isVisible, target, duration, onAnimationComplete]);
-
   return <span>{currentNumber}</span>;
 };
 
-
-// A alteração principal está aqui, no ImpactSlide:
+// Componente StaggeredText
 const StaggeredText = ({ text, isVisible }) => {
-  const words = text.split(' '); // Divide o texto em um array de palavras
-
+  const words = text.split(' ');
   return (
     <p className={`text-xl md:text-2xl text-gray-100 mt-4 stagger-container ${isVisible ? 'visible' : ''}`}>
       {words.map((word, index) => (
         <span
           key={index}
           className="staggered-word"
-          // A mágica acontece aqui! Cada palavra tem um atraso maior que a anterior.
-          style={{ transitionDelay: `${index * 60}ms` }} 
+          style={{ transitionDelay: `${index * 60}ms` }}
         >
-          {word}
+          {word + ' '}
         </span>
       ))}
     </p>
@@ -64,27 +57,45 @@ const ImpactSlide = ({
   numberJsx,
   description,
   align = 'left',
+  ctaLink, // 2. Nova prop para o link do botão
+  ctaText   // 3. Nova prop para o texto do botão
 }) => {
   const { ref, isVisible } = useScrollReveal();
   const [isNumberFinished, setIsNumberFinished] = useState(false);
+  const [isTextFinished, setIsTextFinished] = useState(false); // 4. Novo estado para o botão
 
-  // A MUDANÇA ESTÁ AQUI: Adicionamos um setTimeout para o atraso
   const handleAnimationComplete = useCallback(() => {
-    // Espera 300ms após o número terminar antes de iniciar a animação do texto
     setTimeout(() => {
       setIsNumberFinished(true);
-    }, 300); 
+    }, 300);
   }, []);
 
+  // Efeito para resetar os estados quando o slide sai da tela
   useEffect(() => {
     if (!isVisible) {
       setIsNumberFinished(false);
-    } else if (!number) { // Se for visível e não tiver número, inicia a animação do texto
-      setIsNumberFinished(true);
+      setIsTextFinished(false);
+    } else if (!number) {
+      setIsNumberFinished(true); // Se não houver número, inicia a animação do texto
     }
   }, [isVisible, number]);
 
-  // ... (definição de classes de alinhamento permanece a mesma)
+  // 5. Efeito que observa quando a animação do texto começa,
+  // e então agenda a aparição do botão para o final dela.
+  useEffect(() => {
+    if (isNumberFinished) {
+      const words = description.split(' ');
+      // Duração = (atraso da última palavra) + (duração da transição da palavra)
+      const textAnimationDuration = (words.length - 1) * 60 + 500;
+      
+      const timer = setTimeout(() => {
+        setIsTextFinished(true);
+      }, textAnimationDuration);
+
+      return () => clearTimeout(timer); // Limpa o timer
+    }
+  }, [isNumberFinished, description]);
+
   const alignmentClass = align === 'right' ? 'justify-end' : '';
   const textAlignmentClass = align === 'right' ? 'text-right' : '';
   const overlayClass = align === 'right' ? 'right' : '';
@@ -112,9 +123,22 @@ const ImpactSlide = ({
               {numberJsx}
             </h2>
             
-            {/* USAMOS O NOVO COMPONENTE AQUI */}
             <StaggeredText text={description} isVisible={isNumberFinished} />
-
+            
+            {/* 6. O botão só é renderizado se as props ctaLink e ctaText existirem */}
+            {ctaLink && ctaText && (
+              <a
+                href={ctaLink}
+                className={`border rounded-[15px] mt-16 border-[#353535] bg-[#111] inline-block text-white font-bold py-4 px-8 text-lg transform hover:scale-105 transition-transform duration-300 fade-in-button ${isTextFinished ? 'visible' : ''}`}
+              >
+                <ShinyText
+                  text={ctaText}
+                  disabled={false}
+                  speed={3}
+                  className='font-bold text-lg'
+                />
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -125,19 +149,24 @@ const ImpactSlide = ({
 
 const ImpactSection = () => {
   return (
-    <section className="bg-black overflow-hidden ">
+    <section className="bg-black overflow-hidden">
       <ImpactSlide
         imageUrl="./../assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
         number={90}
         numberSuffix="%"
         description="É a redução do risco de câncer de colo do útero em mulheres vacinadas contra o HPV. Uma única decisão que protege para a vida toda."
+        // 7. Passe as novas props apenas para o slide que deve ter o botão
+        ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+        ctaText="Iniciar Avaliação Agora"
       />
+      
       <ImpactSlide
-        imageUrl="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop"
+        imageUrl="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto-format&fit=crop"
         number={14}
         numberSuffix=" DIAS"
         description="É o tempo médio que uma gripe forte pode te afastar dos treinos. A imunização anual reduz o impacto na sua performance. Mantenha seu ritmo."
-        
+             ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+        ctaText="Iniciar Avaliação Agora"
       />
       <ImpactSlide
         imageUrl="./../assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
@@ -147,6 +176,8 @@ const ImpactSection = () => {
           </>
         }
         description="Pessoas irá desenvolver Herpes Zóster ao longo da vida, com dores debilitantes. A vacina é a prevenção mais eficaz para uma longevidade saudável."
+             ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+        ctaText="Iniciar Avaliação Agora"
       />
     </section>
   );
