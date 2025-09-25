@@ -9,7 +9,7 @@ const Hero = () => {
         <div className="relative w-full h-[19rem] rounded-[1.5rem] overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md flex items-center justify-center" >
           {/* Aqui você vai colocar sua imagem */}
           <img
-            src="/assets/imagem_hero.png" // Seu caminho da imagem
+            src="/v_plus/assets/imagem_hero.png" // Seu caminho da imagem
             alt="Exemplo de interface do WhatsApp"
             className="w-full h-full object-cover rounded-[1.5rem] " // Ajuste o border-radius interno
           />
