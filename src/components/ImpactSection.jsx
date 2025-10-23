@@ -151,7 +151,7 @@ const ImpactSection = () => {
   return (
     <section className="bg-black overflow-hidden">
       <ImpactSlide
-        imageUrl="/v_plus/assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
+        imageUrl="/assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
         number={90}
         numberSuffix="%"
         description="É a redução do risco de câncer de colo do útero em mulheres vacinadas contra o HPV. Uma única decisão que protege para a vida toda."
@@ -169,7 +169,7 @@ const ImpactSection = () => {
         ctaText="Iniciar Avaliação Agora"
       />
       <ImpactSlide
-        imageUrl="/v_plus/assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
+        imageUrl="/assets/Gemini_Generated_Image_wc6lamwc6lamwc6l.png"
         numberJsx={
           <>
             1 <span className="text-4xl md:text-7xl align-middle text-gray-200">a cada 3</span>
