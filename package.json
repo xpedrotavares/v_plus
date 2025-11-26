@@ -6,6 +6,7 @@
   "homepage": "https://xpedrotavares.github.io/v_plus",
   "scripts": {
     "dev": "vite",
+    "test:ci": "node ./api/test_ci.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

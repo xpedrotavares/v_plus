@@ -15,6 +15,14 @@ app.use(express.json({ limit: "10mb" }));
 
 app.post("/api/generate-pdf", async (req, res) => {
   try {
+    // Optional API key protection
+    const requiredKey = process.env.GENERATE_PDF_API_KEY;
+    if (requiredKey) {
+      const provided = req.headers && (req.headers['x-api-key'] || req.headers['X-Api-Key'] || req.headers['X-API-KEY']);
+      if (!provided || provided !== requiredKey) {
+        return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid x-api-key header' });
+      }
+    }
     const { nome_completo, cpf, vacinas_recomendadas, vacinas_opcionais } = req.body;
 
     console.log("Dados recebidos:", { nome_completo, cpf });

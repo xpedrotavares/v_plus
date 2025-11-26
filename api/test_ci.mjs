@@ -1,21 +1,20 @@
-// This script imports the serverless function and calls it with a mock req/res to save a PDF locally
-import handler from "./generate-pdf.js";
-import fs from "fs";
+import handler from "./generate-pdf.mjs";
 
 async function run() {
   const body = {
-    nome_completo: "Teste Dev Vercel",
-    cpf: "111.222.333-44",
+    nome_completo: "CI Smoke Test",
+    cpf: "00000000000",
     vacinas_recomendadas: JSON.stringify([
       { justificativas: ["IDADE"], nome_vacina: "Hepatite A+B" },
     ]),
-    vacinas_opcionais: JSON.stringify([{ vacina_nome: "Meningocócica B" }]),
   };
 
   const req = { method: "POST", body, headers: {} };
+  // Allow workflow to inject secret via env
   if (process.env.GENERATE_PDF_API_KEY) {
     req.headers["x-api-key"] = process.env.GENERATE_PDF_API_KEY;
   }
+
   let chunks = [];
 
   const res = {
@@ -40,18 +39,26 @@ async function run() {
 
   await handler(req, res);
 
-  if (chunks.length > 0) {
-    const buf = Buffer.isBuffer(chunks[0])
-      ? chunks[0]
-      : Buffer.concat(chunks.map((c) => Buffer.from(c)));
-    fs.writeFileSync("/workspaces/v_plus/api/test_serverless_out.pdf", buf);
-    console.log(
-      "Saved /workspaces/v_plus/api/test_serverless_out.pdf size=",
-      buf.length
-    );
-  } else {
-    console.log("No chunks returned");
+  if (chunks.length === 0) {
+    console.error("No data returned from handler");
+    process.exit(2);
   }
+
+  const buf = Buffer.isBuffer(chunks[0])
+    ? chunks[0]
+    : Buffer.concat(chunks.map((c) => Buffer.from(c)));
+
+  const trailer = Buffer.from("%%EOF");
+  if (buf.indexOf(trailer) === -1) {
+    console.error("PDF trailer not found, output is likely invalid");
+    process.exit(3);
+  }
+
+  console.log("CI smoke test passed — PDF contains %%EOF (size=", buf.length, "bytes)");
+  process.exit(0);
 }
 
-run().catch((err) => console.error(err));
+run().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

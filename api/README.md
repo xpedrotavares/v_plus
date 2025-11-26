@@ -14,6 +14,20 @@ Request body (JSON):
 
 Response: application/pdf (arquivo PDF anexo)
 
+Segurança / autenticação (opcional):
+
+- A função agora suporta proteção por `x-api-key`. Se você definir a variável de ambiente `GENERATE_PDF_API_KEY` na sua plataforma (ex.: Vercel), a função exigirá que as requisições incluam o header `x-api-key` com o valor correto — caso contrário ela retorna 401.
+
+Exemplo (curl):
+
+```bash
+curl -X POST "https://<seu-deploy>/api/generate-pdf" \
+	-H "Content-Type: application/json" \
+	-H "x-api-key: <SEU_API_KEY>" \
+	-d '{"nome_completo":"João Silva","cpf":"123","vacinas_recomendadas":"[...]"}' \
+	--output out.pdf
+```
+
 Notas de deploy / recomendações:
 
 - No Vercel, coloque este repositório e ele automaticamente exponha a função em `/api/generate-pdf`.
@@ -27,6 +41,12 @@ Teste local (dentro do container):
 ```bash
 node /workspaces/v_plus/api/test_serverless.mjs
 ```
+
+CI / smoke test (GitHub Actions):
+
+Um workflow `/.github/workflows/smoke-test.yml` foi adicionado e roda um teste que importa o handler diretamente e valida se a saída contém `%%EOF`.
+
+Se você quiser que o CI valide o caminho protegido por chave, configure o secret `GENERATE_PDF_API_KEY` nas Secrets do repositório (ou use o valor padrão `ci-test-key` que o workflow usa).
 
 2. Teste via HTTP (com vercel dev) — opcional:
 

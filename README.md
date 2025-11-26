@@ -11,3 +11,11 @@ Currently, two official plugins are available:
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 # v_plus
+
+## PDF generation API
+
+This project contains a serverless function at `/api/generate-pdf` that creates a vaccination PDF using `@react-pdf/renderer`.
+
+- The API accepts a POST with JSON { nome_completo, cpf, vacinas_recomendadas, vacinas_opcionais } and returns `application/pdf`.
+- Optional protection: set the environment variable `GENERATE_PDF_API_KEY` (in Vercel or your env). When set, requests must include header `x-api-key: <value>`.
+- A GitHub Actions workflow runs a smoke-test that imports the handler and asserts the output contains `%%EOF`.

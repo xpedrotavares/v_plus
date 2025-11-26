@@ -196,6 +196,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // API key protection (optional) — when set, require x-api-key header
+    const requiredKey = process.env.GENERATE_PDF_API_KEY;
+    if (requiredKey) {
+      const provided = (req.headers && (req.headers['x-api-key'] || req.headers['X-API-KEY'] || req.headers['X-Api-Key'])) || req['x-api-key'] || req['X-API-KEY'];
+      if (!provided || provided !== requiredKey) {
+        return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid x-api-key header' });
+      }
+    }
     if (req.method !== "POST") {
       res.status(405).json({ 
         error: "Method Not Allowed",

@@ -12,6 +12,10 @@ async function run() {
   };
 
   const req = { method: "POST", body };
+  // include API key header for local testing when set
+  if (process.env.GENERATE_PDF_API_KEY) {
+    req.headers = { "x-api-key": process.env.GENERATE_PDF_API_KEY };
+  }
   let chunks = [];
 
   const res = {
