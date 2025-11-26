@@ -6,10 +6,6 @@
       "use": "@vercel/node"
     },
     {
-      "src": "api/**/*.jsx",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
