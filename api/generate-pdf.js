@@ -277,13 +277,17 @@ export default async function handler(req, res) {
 
     console.log("PDF gerado com sucesso! Tamanho:", pdfBuffer.length, "bytes");
 
-    // Enviar resposta
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      'attachment; filename="carteira-vacinacao.pdf"'
-    );
-    res.status(200).send(pdfBuffer);
+    // Convert the PDF buffer to a Base64 string
+    const pdfBase64 = pdfBuffer.toString("base64");
+
+    console.log("PDF convertido para Base64. Enviando JSON...");
+
+    // Send a JSON response with the Base64 encoded PDF
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json({
+      message: "PDF gerado com sucesso.",
+      pdf: pdfBase64,
+    });
   } catch (error) {
     console.error("Erro detalhado na geração do PDF:", error);
 
