@@ -229,14 +229,20 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { nome_completo, cpf, vacinas_recomendadas, vacinas_opcionais } =
-      req.body;
+    const {
+      nome_completo,
+      cpf,
+      vacinas_recomendadas,
+      vacinas_opcionais,
+      callback_url, // URL para enviar o PDF gerado
+    } = req.body;
 
     console.log("Dados recebidos:", {
       nome_completo: nome_completo ? "***" : "vazio",
       cpf: cpf ? "***" : "vazio",
       tem_vacinas_recomendadas: !!vacinas_recomendadas,
       tem_vacinas_opcionais: !!vacinas_opcionais,
+      callback_url: callback_url || "vazio",
     });
 
     // Validação
@@ -247,54 +253,78 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log("Iniciando geração do PDF...");
-
-    // Gerar o documento PDF
-    const pdfDoc = buildDocument({
-      nome_completo,
-      cpf,
-      vacinas_recomendadas,
-      vacinas_opcionais,
-    });
-
-    // Converter para buffer
-    const pdfResult = await pdf(pdfDoc).toBuffer();
-
-    let pdfBuffer = pdfResult;
-
-    // Handle stream if needed
-    if (
-      !Buffer.isBuffer(pdfResult) &&
-      pdfResult &&
-      typeof pdfResult.on === "function"
-    ) {
-      const chunks = [];
-      for await (const chunk of pdfResult) {
-        chunks.push(Buffer.from(chunk));
-      }
-      pdfBuffer = Buffer.concat(chunks);
+    if (!callback_url) {
+      return res.status(400).json({
+        error: "Campo obrigatório faltando",
+        details: "callback_url é obrigatório para o envio do PDF",
+      });
     }
 
-    console.log("PDF gerado com sucesso! Tamanho:", pdfBuffer.length, "bytes");
-
-    // Convert the PDF buffer to a Base64 string
-    const pdfBase64 = pdfBuffer.toString("base64");
-
-    console.log("PDF convertido para Base64. Enviando JSON...");
-
-    // Send a JSON response with the Base64 encoded PDF
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).json({
-      message: "PDF gerado com sucesso.",
-      pdf: pdfBase64,
+    // Responder imediatamente para o cliente (e.g., Data2)
+    res.status(202).json({
+      message: "Requisição aceita. O PDF será gerado e enviado para a callback_url.",
     });
+
+    // --- Geração do PDF e envio assíncrono ---
+    try {
+      console.log("Iniciando geração do PDF em background...");
+
+      const pdfDoc = buildDocument({
+        nome_completo,
+        cpf,
+        vacinas_recomendadas,
+        vacinas_opcionais,
+      });
+
+      const pdfResult = await pdf(pdfDoc).toBuffer();
+      let pdfBuffer = pdfResult;
+
+      // Handle stream if needed
+      if (!Buffer.isBuffer(pdfResult) && pdfResult && typeof pdfResult.on === "function") {
+        const chunks = [];
+        for await (const chunk of pdfResult) {
+          chunks.push(Buffer.from(chunk));
+        }
+        pdfBuffer = Buffer.concat(chunks);
+      }
+
+      console.log("PDF gerado com sucesso! Tamanho:", pdfBuffer.length, "bytes");
+
+      console.log(`Enviando PDF para a callback_url: ${callback_url}`);
+
+      // Enviar o PDF para a callback_url usando fetch
+      const fetchRes = await fetch(callback_url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Length": pdfBuffer.length.toString(),
+        },
+        body: pdfBuffer,
+      });
+
+      if (!fetchRes.ok) {
+        const errorBody = await fetchRes.text();
+        throw new Error(
+          `Falha ao enviar PDF para a callback_url. Status: ${fetchRes.status}. Body: ${errorBody}`
+        );
+      }
+
+      console.log("PDF enviado com sucesso para a callback_url.");
+    } catch (error) {
+      // Log de erro para o processo assíncrono
+      console.error("Erro detalhado no processo assíncrono de PDF:", error);
+      // Aqui, não podemos mais enviar uma resposta para o cliente original,
+      // então apenas logamos o erro no servidor.
+    }
   } catch (error) {
-    console.error("Erro detalhado na geração do PDF:", error);
-
-    res.status(500).json({
-      error: "Erro interno ao gerar PDF",
-      details: error.message,
-      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-    });
+    // Este catch lida com erros síncronos (antes do res.status(202))
+    console.error("Erro síncrono na API:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Erro interno no servidor",
+        details: error.message,
+      });
+    }
   }
 }
+

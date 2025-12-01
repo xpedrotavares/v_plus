@@ -145,9 +145,20 @@ export default async function handler(req, res) {
     // API key protection (optional)
     const requiredKey = process.env.GENERATE_PDF_API_KEY;
     if (requiredKey) {
-      const provided = (req.headers && (req.headers['x-api-key'] || req.headers['X-API-KEY'] || req.headers['X-Api-Key'])) || req['x-api-key'] || req['X-API-KEY'];
+      const provided =
+        (req.headers &&
+          (req.headers["x-api-key"] ||
+            req.headers["X-API-KEY"] ||
+            req.headers["X-Api-Key"])) ||
+        req["x-api-key"] ||
+        req["X-API-KEY"];
       if (!provided || provided !== requiredKey) {
-        res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid x-api-key header' });
+        res
+          .status(401)
+          .json({
+            error: "Unauthorized",
+            message: "Missing or invalid x-api-key header",
+          });
         return;
       }
     }
@@ -160,12 +171,10 @@ export default async function handler(req, res) {
       req.body || {};
 
     if (!nome_completo || !cpf || !vacinas_recomendadas) {
-      res
-        .status(400)
-        .json({
-          error:
-            "Campos obrigatórios faltando: nome_completo, cpf, vacinas_recomendadas",
-        });
+      res.status(400).json({
+        error:
+          "Campos obrigatórios faltando: nome_completo, cpf, vacinas_recomendadas",
+      });
       return;
     }
 
@@ -190,19 +199,18 @@ export default async function handler(req, res) {
       pdfBuffer = Buffer.concat(chunks);
     }
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      'attachment; filename="carteira-vacinacao.pdf"'
-    );
-    res.status(200).send(pdfBuffer);
+    const pdfBase64 = pdfBuffer.toString("base64");
+
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json({
+      message: "PDF gerado com sucesso.",
+      pdf: pdfBase64,
+    });
   } catch (err) {
     console.error("generate-pdf error:", err);
-    res
-      .status(500)
-      .json({
-        error: "Erro interno ao gerar PDF",
-        details: err && err.message,
-      });
+    res.status(500).json({
+      error: "Erro interno ao gerar PDF",
+      details: err && err.message,
+    });
   }
 }
