@@ -18,18 +18,29 @@ app.post("/api/generate-pdf", async (req, res) => {
     // Optional API key protection
     const requiredKey = process.env.GENERATE_PDF_API_KEY;
     if (requiredKey) {
-      const provided = req.headers && (req.headers['x-api-key'] || req.headers['X-Api-Key'] || req.headers['X-API-KEY']);
+      const provided =
+        req.headers &&
+        (req.headers["x-api-key"] ||
+          req.headers["X-Api-Key"] ||
+          req.headers["X-API-KEY"]);
       if (!provided || provided !== requiredKey) {
-        return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid x-api-key header' });
+        return res
+          .status(401)
+          .json({
+            error: "Unauthorized",
+            message: "Missing or invalid x-api-key header",
+          });
       }
     }
-    const { nome_completo, cpf, vacinas_recomendadas, vacinas_opcionais } = req.body;
+    const { nome_completo, cpf, vacinas_recomendadas, vacinas_opcionais } =
+      req.body;
 
     console.log("Dados recebidos:", { nome_completo, cpf });
 
     if (!nome_completo || !cpf || !vacinas_recomendadas) {
       return res.status(400).json({
-        error: "Campos obrigatórios faltando: nome_completo, cpf, vacinas_recomendadas",
+        error:
+          "Campos obrigatórios faltando: nome_completo, cpf, vacinas_recomendadas",
       });
     }
 
@@ -45,7 +56,11 @@ app.post("/api/generate-pdf", async (req, res) => {
     const pdfResult = await pdf(pdfDoc).toBuffer();
 
     let pdfBuffer = pdfResult;
-    if (!Buffer.isBuffer(pdfResult) && pdfResult && typeof pdfResult.on === "function") {
+    if (
+      !Buffer.isBuffer(pdfResult) &&
+      pdfResult &&
+      typeof pdfResult.on === "function"
+    ) {
       const chunks = [];
       try {
         for await (const chunk of pdfResult) {
@@ -53,7 +68,10 @@ app.post("/api/generate-pdf", async (req, res) => {
         }
         pdfBuffer = Buffer.concat(chunks);
       } catch (err) {
-        if (pdfResult._readableState && Array.isArray(pdfResult._readableState.buffer)) {
+        if (
+          pdfResult._readableState &&
+          Array.isArray(pdfResult._readableState.buffer)
+        ) {
           pdfBuffer = Buffer.concat(
             pdfResult._readableState.buffer.map((b) => Buffer.from(b))
           );
@@ -63,11 +81,23 @@ app.post("/api/generate-pdf", async (req, res) => {
       }
     }
 
-    console.log("PDF gerado com sucesso! Tamanho:", pdfBuffer && pdfBuffer.length, "bytes");
+    console.log(
+      "PDF gerado com sucesso! Tamanho:",
+      pdfBuffer && pdfBuffer.length,
+      "bytes"
+    );
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", 'attachment; filename="carteira-vacinacao.pdf"');
-    res.send(pdfBuffer);
+    // Convert the PDF buffer to a Base64 string
+    const pdfBase64 = pdfBuffer.toString("base64");
+
+    console.log("PDF convertido para Base64. Enviando JSON...");
+
+    // Send a JSON response with the Base64 encoded PDF
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json({
+      message: "PDF gerado com sucesso.",
+      pdf: pdfBase64,
+    });
   } catch (error) {
     console.error("Erro detalhado:", error);
     res.status(500).json({
