@@ -15,6 +15,4 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  // Ignorar arquivos da API
-  assetsInclude: ['**/*.html'],
 })
