@@ -6,13 +6,11 @@
   "homepage": "https://xpedrotavares.github.io/v_plus",
   "scripts": {
     "dev": "vite",
-    "test:ci": "node ./api/test_ci.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-pdf/renderer": "^4.3.1",
     "axios": "^1.13.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
