@@ -11,18 +11,3 @@
     }
   ]
 }
-  "routes": [
-    {
-      "src": "^/api/generate-pdf$",
-      "dest": "/api/generate-pdf.mjs"
-    },
-    {
-      "src": "^/api/(.*)$",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "^/(?!api)(.*)$",
-      "dest": "/index.html"
-    }
-  ]
-}
