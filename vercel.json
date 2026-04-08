@@ -9,5 +9,11 @@
         "distDir": "dist"
       }
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
