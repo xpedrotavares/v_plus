@@ -10,7 +10,7 @@ const CallToAction = () => {
       <div ref={ref} className={`max-w-2xl mx-auto text-center reveal ${isVisible ? 'visible' : ''}`}>
         <h2 className="text-3xl md:text-5xl font-bold mb-8 opacity-85">Pronto para potencializar sua proteção?</h2>
        <a
-          href="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+          href="https://wa.me/message/YRLNAM3PKFBKH1"
           className="border rounded-[15px] mt-4 border-[#353535] bg-[#111] inline-block text-white font-bold py-4 px-8 text-lg transform hover:scale-105 transition-transform duration-300"
         >
            <ShinyText

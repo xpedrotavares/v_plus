@@ -156,7 +156,7 @@ const ImpactSection = () => {
         numberSuffix="%"
         description="É a redução do risco de câncer de colo do útero em mulheres vacinadas contra o HPV. Uma única decisão que protege para a vida toda."
         // 7. Passe as novas props apenas para o slide que deve ter o botão
-        ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+        ctaLink="https://wa.me/message/YRLNAM3PKFBKH1"
         ctaText="Iniciar Avaliação Agora"
       />
       
@@ -165,7 +165,7 @@ const ImpactSection = () => {
         number={14}
         numberSuffix=" DIAS"
         description="É o tempo médio que uma gripe forte pode te afastar dos treinos. A imunização anual reduz o impacto na sua performance. Mantenha seu ritmo."
-             ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+             ctaLink="https://wa.me/message/YRLNAM3PKFBKH1"
         ctaText="Iniciar Avaliação Agora"
       />
       <ImpactSlide
@@ -176,7 +176,7 @@ const ImpactSection = () => {
           </>
         }
         description="Pessoas irá desenvolver Herpes Zóster ao longo da vida, com dores debilitantes. A vacina é a prevenção mais eficaz para uma longevidade saudável."
-             ctaLink="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!"
+             ctaLink="https://wa.me/message/YRLNAM3PKFBKH1"
         ctaText="Iniciar Avaliação Agora"
       />
     </section>

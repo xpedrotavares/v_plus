@@ -7,7 +7,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <img src="/assets/logo.png" alt="Vaccine+" className="w-44" />
         {/* Usando o novo componente ShinyButton */}
-        <a href="https://wa.me/15556654247?text=Ol%C3%A1%2C%20quero%20iniciar%20minha%20avalia%C3%A7%C3%A3o%20vacinal!" className='border rounded-[15px]  border-[#353535] bg-[#111]'>
+        <a href="https://wa.me/message/YRLNAM3PKFBKH1" className='border rounded-[15px]  border-[#353535] bg-[#111]'>
             
         <ShinyText
           text="Fazer Avaliação"
